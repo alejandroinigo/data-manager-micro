@@ -2,8 +2,10 @@ package com.developer.controller;
 
 import com.developer.controller.model.Order;
 import com.developer.controller.model.Record;
+import com.developer.service.DataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -23,6 +25,9 @@ import java.util.List;
 public class RecordController {
     private static final Logger logger = LoggerFactory.getLogger(RecordController.class);
 
+    @Autowired
+    DataService dataService;
+
     @RequestMapping(
             method = RequestMethod.GET,
             value = "/records",
@@ -36,7 +41,7 @@ public class RecordController {
             @Valid @RequestParam(value = "sortBy", required = false) List<@Valid Order> sortBy
     ) {
         logger.debug("name {}, status {}, page {}, pageSize {}, sortBy {}", name, status, page, pageSize, sortBy);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(dataService.getRecords(), HttpStatus.OK);
     }
 
 }

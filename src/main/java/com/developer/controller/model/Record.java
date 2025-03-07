@@ -3,9 +3,10 @@ package com.developer.controller.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.time.Instant;
 
 @Data
 public class Record {
@@ -34,9 +35,8 @@ public class Record {
   @JsonProperty("name")
   private String name;
 
-  @Min(1L)
-  @JsonProperty("createdOn")
-  private Long createdOn;
+  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+  private Instant createdOn;
 
   @JsonProperty("status")
   private StatusEnum status;
