@@ -1,0 +1,139 @@
+openapi: 3.0.2
+info:
+  title: Swagger Recordstore - OpenAPI 3.0
+  description: This is a Full Stack Developer Test REST API project for Spring Boot
+  version: 1.0.0
+servers:
+  - url: /api
+tags:
+  - name: record
+    description: Everything about your Records
+paths:
+  /records:
+    get:
+      tags:
+        - record
+      summary: Find records
+      description: Returns a list of records
+      operationId: getRecords
+      parameters:
+        - name: name
+          in: query
+          description: Name values that need to be considered for filter
+          schema:
+            type: string
+        - name: status
+          in: query
+          description: Status values that need to be considered for filter
+          required: false
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - COMPLETED
+                - CANCELED
+                - ERROR
+        - name: page
+          in: query
+          description: The page number
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: pageSize
+          in: query
+          description: The numbers of items to return for each page
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: sortBy
+          in: query
+          description: Required order for the query results
+          explode: true
+          schema:
+            type: array
+
+            items:
+              $ref: '#/components/schemas/Order'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Record'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Record'
+        '400':
+          description: Invalid status value
+        '404':
+          description: Record not found
+      security:
+        - api_key: []
+components:
+  schemas:
+    Record:
+      required:
+        - id
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 6690
+        name:
+          type: string
+          example: gallant_chandrasekhar
+        createdOn:
+          type: integer
+          format: int64
+          minimum: 1
+          example: 1543325977000
+        status:
+          type: string
+          description: record status
+          enum:
+            - COMPLETED
+            - CANCELED
+            - ERROR
+        description:
+          type: string
+          example: Etincidunt etincidunt ut voluptatem numquam dolore aliquam dolore.
+        delta:
+          type: integer
+          format: int64
+          example: 6690
+    Order:
+      type: object
+      properties:
+        field:
+          type: string
+          default: id
+          enum:
+            - id
+            - name
+            - createdOn
+        order:
+          type: string
+          default: asc
+          enum:
+            - asc
+            - desc
+        priority:
+          type: integer
+          format: int32
+          example: 1
+  securitySchemes:
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header
