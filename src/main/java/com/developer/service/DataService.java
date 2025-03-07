@@ -1,16 +1,19 @@
 package com.developer.service;
 
-import com.developer.persistence.entity.PersistenceData;
 import com.developer.controller.model.Record;
 import com.developer.exception.DataManagerInternalException;
+import com.developer.persistence.entity.PersistenceData;
 import com.developer.persistence.mapper.DataObjectMapperBuilder;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class DataService {
@@ -53,5 +56,44 @@ public class DataService {
         } catch (IOException e) {
             throw new DataManagerInternalException("Exception while mapping json storage file to object", e);
         }
+    }
+
+    public List<Record> filterByName(List<Record> records, String name) {
+        return records.stream()
+                .filter(record -> StringUtils.containsIgnoreCase(name, record.getName()))
+                .collect(Collectors.toList());
+    }
+
+    public List<Record> filterByStatus(List<Record> records, Record.StatusEnum status) {
+        return records.stream()
+                .filter(record -> status.equals(record.getStatus()))
+                .collect(Collectors.toList());
+    }
+
+    public List<Record> OrderById(List<Record> records, int order) {
+        if (order == 1) {
+            records.sort(Comparator.comparing(Record::getId));
+        } else {
+            records.sort(Comparator.comparing(Record::getId).reversed());
+        }
+        return records;
+    }
+
+    public List<Record> OrderByName(List<Record> records, int order) {
+        if (order == 1) {
+            records.sort(Comparator.comparing(Record::getName));
+        } else {
+            records.sort(Comparator.comparing(Record::getName).reversed());
+        }
+        return records;
+    }
+
+    public List<Record> OrderByCreatedOn(List<Record> records, int order) {
+        if (order == 1) {
+            records.sort(Comparator.comparing(Record::getCreatedOn));
+        } else {
+            records.sort(Comparator.comparing(Record::getCreatedOn).reversed());
+        }
+        return records;
     }
 }

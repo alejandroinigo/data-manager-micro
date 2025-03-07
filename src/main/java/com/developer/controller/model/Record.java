@@ -2,6 +2,7 @@ package com.developer.controller.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -9,6 +10,7 @@ import javax.validation.constraints.NotNull;
 import java.time.Instant;
 
 @Data
+@AllArgsConstructor
 public class Record {
 
   public enum StatusEnum {
