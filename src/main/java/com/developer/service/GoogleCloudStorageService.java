@@ -5,22 +5,21 @@ import com.google.cloud.storage.StorageOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.nio.file.Path;
-
 public class GoogleCloudStorageService {
     private static final Logger logger = LoggerFactory.getLogger(GoogleCloudStorageService.class);
 
     /**
-     * Instantiate an anonymous Google Cloud Storage client, which can only access public files
+     * Downloads the object containing the list of records from Google Cloud Storage.
+     * It instantiates an anonymous Google Cloud Storage client, which can only access public files.
      *
-     * @return Google Cloud Storage public object byte array
+     * @param bucketName The name of the Google Cloud Storage bucket
+     * @param publicObjectName The name of the public object
+     * @return The byte array representing the downloaded object
      */
     public static byte[] downloadPublicObject(String bucketName, String publicObjectName) {
         Storage storage = StorageOptions.getUnauthenticatedInstance().getService();
-//        Blob blob = storage.get(BlobId.of(bucketName, publicObjectName));
-//        blob.downloadTo(destFilePath);
         byte[] content = storage.readAllBytes(bucketName, publicObjectName);
-        logger.debug("Downloaded Google Cloud Storage public object {} from bucket name {}", publicObjectName, bucketName);
+        logger.info("Downloaded Google Cloud Storage public object {} from bucket name {}", publicObjectName, bucketName);
         return content;
     }
 }

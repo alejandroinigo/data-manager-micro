@@ -13,41 +13,42 @@ import java.time.Instant;
 @AllArgsConstructor
 public class Record {
 
-  public enum StatusEnum {
-    COMPLETED("COMPLETED"),
-    CANCELED("CANCELED"),
-    ERROR("ERROR");
+    public enum StatusEnum {
+        EMPTY(""),
+        COMPLETED("COMPLETED"),
+        CANCELED("CANCELED"),
+        ERROR("ERROR");
 
-    private String value;
+        private String value;
 
-    StatusEnum(String value) {
-      this.value = value;
+        StatusEnum(String value) {
+            this.value = value;
+        }
+
+        @JsonValue
+        public String getValue() {
+            return value;
+        }
     }
 
-    @JsonValue
-    public String getValue() {
-      return value;
-    }
-  }
+    @NotNull
+    @JsonProperty("id")
+    private Long id;
 
-  @NotNull
-  @JsonProperty("id")
-  private Long id;
+    @JsonProperty("name")
+    private String name;
 
-  @JsonProperty("name")
-  private String name;
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Instant createdOn;
 
-  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-  private Instant createdOn;
+    @JsonProperty("status")
+    private StatusEnum status;
 
-  @JsonProperty("status")
-  private StatusEnum status;
+    @JsonProperty("description")
+    private String description;
 
-  @JsonProperty("description")
-  private String description;
-
-  @JsonProperty("delta")
-  private Long delta;
+    @JsonProperty("delta")
+    private Long delta;
 
 }
 
