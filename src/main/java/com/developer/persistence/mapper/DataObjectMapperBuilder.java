@@ -20,8 +20,6 @@ public class DataObjectMapperBuilder {
                 .configure(READ_DATE_TIMESTAMPS_AS_NANOSECONDS, Boolean.FALSE)
                 .configure(FAIL_ON_EMPTY_BEANS, Boolean.FALSE)
                 .configure(WRITE_ENUMS_USING_TO_STRING, Boolean.TRUE)
-                .configure(WRITE_DATES_AS_TIMESTAMPS, Boolean.FALSE)
-                .configure(WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, Boolean.FALSE)
                 .registerModule(new JavaTimeModule())
                 .registerModule(new Jdk8Module());
         objectMapper.findAndRegisterModules();

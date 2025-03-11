@@ -1,8 +1,8 @@
 package com.developer.service;
 
+import com.developer.controller.model.OrderEnum;
 import com.developer.controller.model.Record;
-import com.developer.controller.model.Record.StatusEnum;
-import com.developer.controller.model.SortBy.OrderEnum;
+import com.developer.controller.model.StatusEnum;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -91,7 +91,7 @@ public class RecordProcessingService {
      */
     public List<Record> getRecordsPage(final List<Record> records, final int pageSize, final int page) {
         final int beginIndex = Math.max(0, pageSize * (page -1));
-        final int endIndex = Math.min(records.size(), pageSize * page) + 1;
+        final int endIndex = Math.min(records.size(), pageSize * page);
         return records.subList(beginIndex, endIndex);
     }
 }

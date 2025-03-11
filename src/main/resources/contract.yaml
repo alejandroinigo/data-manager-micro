@@ -4,7 +4,7 @@ info:
   description: This is a Full Stack Developer Test REST API project for Spring Boot
   version: 1.0.0
 servers:
-  - url: /api
+  - url: http://localhost:8080/api
 tags:
   - name: record
     description: Everything about your Records
@@ -20,6 +20,7 @@ paths:
         - name: name
           in: query
           description: Name values that need to be considered for filter
+          required: false
           schema:
             type: string
         - name: status
@@ -50,15 +51,31 @@ paths:
             minimum: 1
             maximum: 100
             default: 20
-        - name: sortBy
+        - name: field
           in: query
-          description: Required order for the query results
+          description: Required field for the sorted query results
+          required: false
           explode: true
           schema:
             type: array
-
             items:
-              $ref: '#/components/schemas/Order'
+              type: string
+              enum:
+                - ID
+                - NAME
+                - CREATED_ON
+        - name: order
+          in: query
+          description: Required order for the sorted query results
+          required: false
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - ASC
+                - DESC
       responses:
         '200':
           description: successful operation
@@ -112,26 +129,6 @@ components:
           type: integer
           format: int64
           example: 6690
-    Order:
-      type: object
-      properties:
-        field:
-          type: string
-          default: id
-          enum:
-            - id
-            - name
-            - createdOn
-        order:
-          type: string
-          default: asc
-          enum:
-            - asc
-            - desc
-        priority:
-          type: integer
-          format: int32
-          example: 1
   securitySchemes:
     api_key:
       type: apiKey

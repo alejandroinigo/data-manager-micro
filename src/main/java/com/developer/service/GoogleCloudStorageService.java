@@ -19,7 +19,7 @@ public class GoogleCloudStorageService {
     public static byte[] downloadPublicObject(String bucketName, String publicObjectName) {
         Storage storage = StorageOptions.getUnauthenticatedInstance().getService();
         byte[] content = storage.readAllBytes(bucketName, publicObjectName);
-        logger.info("Downloaded Google Cloud Storage public object {} from bucket name {}", publicObjectName, bucketName);
+        logger.debug("Downloaded Google Cloud Storage public object {} from bucket name {}", publicObjectName, bucketName);
         return content;
     }
 }

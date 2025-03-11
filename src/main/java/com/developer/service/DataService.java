@@ -29,10 +29,10 @@ public class DataService {
     private List<Record> data = new ArrayList<>();
 
     @Value("classpath:data/data.json")
-    Resource resourceFile;
+    private Resource resourceFile;
 
-    @Value("${dataservice.cloud.enabled}")
-    Boolean isDataFromServer;
+    @Value("${dataservice.cloud.enabled:true}")
+    public Boolean isDataFromServer;
 
     /**
      * Retrieves the list of records from the storage server
@@ -44,9 +44,9 @@ public class DataService {
             return data;
         }
         if (isDataFromServer) {
-            data = getLocalRecords().getOutput();
-        } else {
             data = getServerRecords().getOutput();
+        } else {
+            data = getLocalRecords().getOutput();
         }
         return data;
     }
@@ -56,7 +56,7 @@ public class DataService {
      *
      * @return A PersistenceData object with server records
      */
-    public PersistenceData getServerRecords() {
+    private PersistenceData getServerRecords() {
         ObjectMapper objectMapper = DataObjectMapperBuilder.build();
         try {
             return objectMapper.readValue(GoogleCloudStorageService.downloadPublicObject(bucketName, publicObjectName), new TypeReference<>() {
@@ -71,7 +71,7 @@ public class DataService {
      *
      * @return A PersistenceData object with server records
      */
-    public PersistenceData getLocalRecords() {
+    private PersistenceData getLocalRecords() {
         ObjectMapper objectMapper = DataObjectMapperBuilder.build();
         try {
             logger.debug("Get records from json storage file");
