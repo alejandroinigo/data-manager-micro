@@ -13,6 +13,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +42,7 @@ public class DataService {
      */
     public List<Record> getRecords() {
         if (!data.isEmpty()) {
+            logger.debug("Get records from cached data");
             return data;
         }
         if (isDataFromServer) {
@@ -48,6 +50,10 @@ public class DataService {
         } else {
             data = getLocalRecords().getOutput();
         }
+        data.stream()
+                .filter(record -> record.getCreatedOn() == null)
+                .forEach(record -> record.setCreatedOn(Instant.ofEpochSecond(0)));
+
         return data;
     }
 

@@ -1,15 +1,16 @@
 package com.developer.controller.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotNull;
 import java.time.Instant;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class Record {
 
     @NotNull
@@ -19,7 +20,7 @@ public class Record {
     @JsonProperty("name")
     private String name;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "UTC")
+    @JsonProperty("createdOn")
     private Instant createdOn;
 
     @JsonProperty("status")

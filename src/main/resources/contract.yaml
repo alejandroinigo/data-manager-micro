@@ -63,7 +63,7 @@ paths:
               enum:
                 - ID
                 - NAME
-                - CREATED_ON
+                - CREATEDON
         - name: order
           in: query
           description: Required order for the sorted query results
@@ -80,25 +80,33 @@ paths:
         '200':
           description: successful operation
           content:
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Record'
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Record'
+                  $ref: '#/components/schemas/RecordPage'
         '400':
           description: Invalid status value
         '404':
           description: Record not found
-      security:
-        - api_key: []
 components:
   schemas:
-    Record:
+    RecordPage:
+      type: object
+      properties:
+        totalPages:
+          type: integer
+          format: int32
+          example: 30
+        totalRecords:
+          type: integer
+          format: int32
+          example: 600
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecordData'
+    RecordData:
       required:
         - id
       type: object
@@ -111,10 +119,8 @@ components:
           type: string
           example: gallant_chandrasekhar
         createdOn:
-          type: integer
-          format: int64
-          minimum: 1
-          example: 1543325977000
+          type: string
+          example: yyyy-MM-dd HH:mm:ss
         status:
           type: string
           description: record status
@@ -129,8 +135,3 @@ components:
           type: integer
           format: int64
           example: 6690
-  securitySchemes:
-    api_key:
-      type: apiKey
-      name: api_key
-      in: header

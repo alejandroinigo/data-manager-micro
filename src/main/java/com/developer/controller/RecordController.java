@@ -1,11 +1,12 @@
 package com.developer.controller;
 
-import com.developer.controller.model.FieldEnum;
-import com.developer.controller.model.OrderEnum;
+import com.developer.controller.model.*;
 import com.developer.controller.model.Record;
-import com.developer.controller.model.StatusEnum;
 import com.developer.service.DataService;
 import com.developer.service.RecordProcessingService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,9 +17,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,74 +47,88 @@ public class RecordController {
             value = "/records",
             produces = {"application/json"}
     )
-    ResponseEntity<List<Record>> getRecords(
+    ResponseEntity<RecordPage> getRecords(
             @Valid @RequestParam(value = "name", required = false, defaultValue = "") String name,
             @Valid @RequestParam(value = "status", required = false) StatusEnum status,
             @Min(1) @Valid @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
             @Min(1) @Max(100) @Valid @RequestParam(value = "pageSize", required = false, defaultValue = "20") Integer pageSize,
-            @Valid @RequestParam(value = "field", required = false) FieldEnum field,
-            @Valid @RequestParam(value = "order", required = false) OrderEnum order
+            @Valid @RequestParam(value = "sortBy", required = false) FieldEnum field,
+            @Valid @RequestParam(value = "sortOrder", required = false) OrderEnum order
     ) {
-        List<Record> filteredRecords = filterRecords(dataService.getRecords(), name, status);
-        sortRecords(filteredRecords, field, order);
-        return new ResponseEntity<>(paginateRecords(filteredRecords, pageSize, page), HttpStatus.OK);
+        List<Record> filteredRecordData = filterRecords(dataService.getRecords(), name, status);
+        sortRecords(filteredRecordData, field, order);
+        final int totalPages = countNumberOfPages(filteredRecordData.size(), pageSize);
+        final int totalRecords = filteredRecordData.size();
+        RecordPage recordPage = new RecordPage(totalPages, totalRecords, paginateRecords(filteredRecordData, pageSize, page));
+        return new ResponseEntity<>(recordPage, HttpStatus.OK);
     }
 
     /**
      * Filters a list of records based on name and status
      *
-     * @param records The list of records to filter
+     * @param recordData The list of records to filter
      * @param name    The name to filter by
      * @param status  The status to filter by
      * @return The filtered list of records
      */
-    private List<Record> filterRecords(final List<Record> records, final String name, final StatusEnum status) {
-        List<Record> filteredRecords = new ArrayList<>(records);
+    private List<Record> filterRecords(final List<Record> recordData, final String name, final StatusEnum status) {
+        List<Record> filteredRecordData = new ArrayList<>(recordData);
         if (!StringUtils.isEmpty(name)) {
-            filteredRecords = recordProcessingService.filterByName(filteredRecords, name);
+            filteredRecordData = recordProcessingService.filterByName(filteredRecordData, name);
         }
         if (null != status) {
-            filteredRecords = recordProcessingService.filterByStatus(filteredRecords, status);
+            filteredRecordData = recordProcessingService.filterByStatus(filteredRecordData, status);
         }
-        return filteredRecords;
+        return filteredRecordData;
     }
 
     /**
      * Sorts a list of records based on a field and order
      *
-     * @param records The list of records to sort
+     * @param recordData The list of records to sort
      * @param field   The field to sort by
      * @param order   The sorting order (asc or desc)
      */
-    private void sortRecords(final List<Record> records, final FieldEnum field, final OrderEnum order) {
+    private void sortRecords(final List<Record> recordData, final FieldEnum field, final OrderEnum order) {
         if (field == null) {
-            recordProcessingService.orderById(records, OrderEnum.ASC);
+            recordProcessingService.orderById(recordData, OrderEnum.ASC);
             return;
         }
         switch (field) {
             case ID:
-                recordProcessingService.orderById(records, order);
+                recordProcessingService.orderById(recordData, order);
                 break;
             case NAME:
-                recordProcessingService.orderByName(records, order);
+                recordProcessingService.orderByName(recordData, order);
                 break;
-            case CREATED_ON:
-                recordProcessingService.orderByCreatedOn(records, order);
+            case CREATEDON:
+                recordProcessingService.orderByCreatedOn(recordData, order);
                 break;
             default:
-                recordProcessingService.orderById(records, OrderEnum.ASC);
+                recordProcessingService.orderById(recordData, OrderEnum.ASC);
         }
     }
 
     /**
      * Paginates a list of records
      *
-     * @param records  The list of records to paginate
+     * @param recordData  The list of records to paginate
      * @param pageSize The number of records per page
      * @param page     The page number
      * @return The paginated list of records
      */
-    private List<Record> paginateRecords(final List<Record> records, final int pageSize, final int page) {
-        return recordProcessingService.getRecordsPage(records, pageSize, page);
+    private List<Record> paginateRecords(final List<Record> recordData, final int pageSize, final int page) {
+        return recordProcessingService.getRecordsPage(recordData, pageSize, page);
+    }
+
+    /**
+     * Count the number of pages
+     *
+     * @param numberOfRecords The number of records
+     * @param pageSize The number of records per page
+     * @return The number of pages
+     */
+    private int countNumberOfPages(int numberOfRecords, int pageSize) {
+        return numberOfRecords / pageSize + (numberOfRecords % pageSize == 0 ? 0 : 1);
     }
 }

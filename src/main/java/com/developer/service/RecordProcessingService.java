@@ -16,12 +16,12 @@ public class RecordProcessingService {
      /**
      * Filters the list of records by name
      *
-     * @param records The list of records to filter
+     * @param recordData The list of records to filter
      * @param name The name to filter by
      * @return A filtered list of Record objects
      */
-    public List<Record> filterByName(final List<Record> records, final String name) {
-        return records.stream()
+    public List<Record> filterByName(final List<Record> recordData, final String name) {
+        return recordData.stream()
                 .filter(record -> StringUtils.containsIgnoreCase(record.getName(), name))
                 .collect(Collectors.toList());
     }
@@ -29,12 +29,12 @@ public class RecordProcessingService {
     /**
      * Filters the list of records by status
      *
-     * @param records The list of records to filter
+     * @param recordData The list of records to filter
      * @param status The status to filter by
      * @return A filtered list of Record objects
      */
-    public List<Record> filterByStatus(final List<Record> records, final StatusEnum status) {
-        return records.stream()
+    public List<Record> filterByStatus(final List<Record> recordData, final StatusEnum status) {
+        return recordData.stream()
                 .filter(record -> status.equals(record.getStatus()))
                 .collect(Collectors.toList());
     }
@@ -42,56 +42,56 @@ public class RecordProcessingService {
     /**
      * Orders the list of records by Id
      *
-     * @param records The list of records to order
+     * @param recordData The list of records to order
      * @param order The order (ascending or descending)
      */
-    public void orderById(final List<Record> records, final OrderEnum order) {
+    public void orderById(final List<Record> recordData, final OrderEnum order) {
         if (order == OrderEnum.ASC) {
-            records.sort(Comparator.comparing(Record::getId));
+            recordData.sort(Comparator.comparing(Record::getId));
         } else {
-            records.sort(Comparator.comparing(Record::getId).reversed());
+            recordData.sort(Comparator.comparing(Record::getId).reversed());
         }
     }
 
     /**
      * Orders the list of records by Name
      *
-     * @param records The list of records to order
+     * @param recordData The list of records to order
      * @param order The order (ascending or descending)
      */
-    public void orderByName(final List<Record> records, final OrderEnum order) {
+    public void orderByName(final List<Record> recordData, final OrderEnum order) {
         if (order == OrderEnum.ASC) {
-            records.sort(Comparator.comparing(Record::getName, String.CASE_INSENSITIVE_ORDER));
+            recordData.sort(Comparator.comparing(Record::getName, String.CASE_INSENSITIVE_ORDER));
         } else {
-            records.sort(Comparator.comparing(Record::getName, String.CASE_INSENSITIVE_ORDER).reversed());
+            recordData.sort(Comparator.comparing(Record::getName, String.CASE_INSENSITIVE_ORDER).reversed());
         }
     }
 
     /**
      * Orders the list of records by CreatedOn
      *
-     * @param records The list of records to order
+     * @param recordData The list of records to order
      * @param order The order (ascending or descending)
      */
-    public void orderByCreatedOn(final List<Record> records, final OrderEnum order) {
+    public void orderByCreatedOn(final List<Record> recordData, final OrderEnum order) {
         if (order == OrderEnum.ASC) {
-            records.sort(Comparator.comparing(Record::getCreatedOn));
+            recordData.sort(Comparator.comparing(Record::getCreatedOn));
         } else {
-            records.sort(Comparator.comparing(Record::getCreatedOn).reversed());
+            recordData.sort(Comparator.comparing(Record::getCreatedOn).reversed());
         }
     }
 
     /**
      * Paginates a list of records
      *
-     * @param records The list of records to paginate
+     * @param recordData The list of records to paginate
      * @param pageSize The number of records per page
      * @param page The page number
      * @return A paginated list of Record objects
      */
-    public List<Record> getRecordsPage(final List<Record> records, final int pageSize, final int page) {
+    public List<Record> getRecordsPage(final List<Record> recordData, final int pageSize, final int page) {
         final int beginIndex = Math.max(0, pageSize * (page -1));
-        final int endIndex = Math.min(records.size(), pageSize * page);
-        return records.subList(beginIndex, endIndex);
+        final int endIndex = Math.min(recordData.size(), pageSize * page);
+        return recordData.subList(beginIndex, endIndex);
     }
 }

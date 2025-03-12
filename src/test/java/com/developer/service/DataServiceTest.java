@@ -40,15 +40,15 @@ class DataServiceTest {
     @InjectMocks
     private DataService dataService;
 
-    private List<Record> records;
+    private List<Record> recordData;
 
     @BeforeEach
     void setUp() {
         closeable = MockitoAnnotations.openMocks(this);
         Record record = new Record(1389L, "vibrant_hypatia", Instant.ofEpochSecond(1), StatusEnum.COMPLETED, "Quiquia dolor quaerat dolore etincidunt modi velit.", 6573L);
-        records = Collections.singletonList(record);
+        this.recordData = Collections.singletonList(record);
         PersistenceData persistenceData = new PersistenceData();
-        persistenceData.setOutput(records);
+        persistenceData.setOutput(this.recordData);
     }
 
     @AfterEach
@@ -66,7 +66,7 @@ class DataServiceTest {
 
         List<Record> result = dataService.getRecords();
 
-        assertEquals(records, result);
+        assertEquals(recordData, result);
         verify(resourceFile, times(1)).getInputStream();
     }
 

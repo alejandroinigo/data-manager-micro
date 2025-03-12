@@ -27,6 +27,7 @@ public class RecordProcessingServiceTest {
     private static final Random random = new Random();
     private static final int RECORDS_FILTER_SORT_SIZE = 20;
     private static final int PAGE_SIZE = 20;
+    private static final boolean IS_PRINT_TEST = false;
 
     @InjectMocks
     RecordProcessingService recordProcessingService;
@@ -39,14 +40,14 @@ public class RecordProcessingServiceTest {
     @Test
     public void test_filterByName_when_name_exists_should_find_data() {
         final String filterName = "FILTER_NAME";
-        List<Record> actualRecords = new ArrayList<>(randomRecordsList);
-        final int randomRecordIndex = random.nextInt(actualRecords.size() - 2) + 1;
+        List<Record> actualRecordData = new ArrayList<>(randomRecordsList);
+        final int randomRecordIndex = random.nextInt(actualRecordData.size() - 2) + 1;
 
-        actualRecords.get(0).setName(filterName);
-        actualRecords.get(randomRecordIndex).setName(filterName);
-        actualRecords.get(actualRecords.size() - 1).setName(filterName);
+        actualRecordData.get(0).setName(filterName);
+        actualRecordData.get(randomRecordIndex).setName(filterName);
+        actualRecordData.get(actualRecordData.size() - 1).setName(filterName);
 
-        List<Record> recordsFiltered = recordProcessingService.filterByName(actualRecords, filterName);
+        List<Record> recordsFiltered = recordProcessingService.filterByName(actualRecordData, filterName);
 
         assertEquals(3, recordsFiltered.size());
         for (Record record : recordsFiltered) {
@@ -58,11 +59,11 @@ public class RecordProcessingServiceTest {
     public void test_filterByName_when_name_contains_and_different_case_should_find_data() {
         final String recordName = "FILTER_NAME_EXTRA_SUFFIX";
         final String filterName = "filter_name";
-        List<Record> actualRecords = new ArrayList<>(randomRecordsList);
-        final int randomRecordIndex = random.nextInt(actualRecords.size());
-        actualRecords.get(randomRecordIndex).setName(recordName);
+        List<Record> actualRecordData = new ArrayList<>(randomRecordsList);
+        final int randomRecordIndex = random.nextInt(actualRecordData.size());
+        actualRecordData.get(randomRecordIndex).setName(recordName);
 
-        List<Record> recordsFiltered = recordProcessingService.filterByName(actualRecords, filterName);
+        List<Record> recordsFiltered = recordProcessingService.filterByName(actualRecordData, filterName);
 
         assertEquals(1, recordsFiltered.size());
         assertEquals(recordName, recordsFiltered.get(0).getName());
@@ -70,8 +71,8 @@ public class RecordProcessingServiceTest {
 
     @Test
     public void test_filterByName_when_name_not_exists_should_not_find_data() {
-        List<Record> actualRecords = new ArrayList<>(randomRecordsList);
-        List<Record> recordsFiltered = recordProcessingService.filterByName(actualRecords, "NOT_EXISTING_NAME");
+        List<Record> actualRecordData = new ArrayList<>(randomRecordsList);
+        List<Record> recordsFiltered = recordProcessingService.filterByName(actualRecordData, "NOT_EXISTING_NAME");
 
         assertEquals(0, recordsFiltered.size());
     }
@@ -79,16 +80,16 @@ public class RecordProcessingServiceTest {
     @Test
     public void test_filterByStatus_when_status_exists_should_find_data() {
         StatusEnum statusFilter = StatusEnum.CANCELED;
-        List<Record> actualRecords = randomRecordsList.stream()
+        List<Record> actualRecordData = randomRecordsList.stream()
                 .peek(record -> record.setStatus(StatusEnum.COMPLETED))
                 .collect(Collectors.toList());
-        final int randomRecordIndex = random.nextInt(actualRecords.size() - 2) + 1;
+        final int randomRecordIndex = random.nextInt(actualRecordData.size() - 2) + 1;
 
-        actualRecords.get(0).setStatus(statusFilter);
-        actualRecords.get(randomRecordIndex).setStatus(statusFilter);
-        actualRecords.get(actualRecords.size() - 1).setStatus(statusFilter);
+        actualRecordData.get(0).setStatus(statusFilter);
+        actualRecordData.get(randomRecordIndex).setStatus(statusFilter);
+        actualRecordData.get(actualRecordData.size() - 1).setStatus(statusFilter);
 
-        List<Record> recordsFiltered = recordProcessingService.filterByStatus(actualRecords, statusFilter);
+        List<Record> recordsFiltered = recordProcessingService.filterByStatus(actualRecordData, statusFilter);
 
         assertEquals(3, recordsFiltered.size());
         for (Record record : recordsFiltered) {
@@ -98,92 +99,92 @@ public class RecordProcessingServiceTest {
 
     @Test
     public void test_filterByStatus_when_status_not_exists_should_not_find_data() {
-        List<Record> actualRecords = randomRecordsList.stream()
+        List<Record> actualRecordData = randomRecordsList.stream()
                 .peek(record -> record.setStatus(StatusEnum.COMPLETED))
                 .collect(Collectors.toList());
-        List<Record> recordsFiltered = recordProcessingService.filterByStatus(actualRecords, StatusEnum.ERROR);
+        List<Record> recordsFiltered = recordProcessingService.filterByStatus(actualRecordData, StatusEnum.ERROR);
 
         assertEquals(0, recordsFiltered.size());
     }
 
     @Test
     public void test_orderById_when_data_order_asc_should_sort_data_asc() {
-        List<Record> actualRecords = new ArrayList<>(randomRecordsList);
-        List<Record> expectedRecords = new ArrayList<>(randomRecordsList);
-        expectedRecords.sort(Comparator.comparing(Record::getId));
+        List<Record> actualRecordData = new ArrayList<>(randomRecordsList);
+        List<Record> expectedRecordData = new ArrayList<>(randomRecordsList);
+        expectedRecordData.sort(Comparator.comparing(Record::getId));
 
-        recordProcessingService.orderById(actualRecords, OrderEnum.ASC);
+        recordProcessingService.orderById(actualRecordData, OrderEnum.ASC);
 
-        assertEquals(expectedRecords, actualRecords);
-        logTestResult(actualRecords);
+        assertEquals(expectedRecordData, actualRecordData);
+        logTestResult(actualRecordData);
     }
 
     @Test
     public void test_orderById_when_data_order_desc_should_sort_data_desc() {
-        List<Record> actualRecords = new ArrayList<>(randomRecordsList);
-        List<Record> expectedRecords = new ArrayList<>(randomRecordsList);
-        expectedRecords.sort(Comparator.comparing(Record::getId).reversed());
+        List<Record> actualRecordData = new ArrayList<>(randomRecordsList);
+        List<Record> expectedRecordData = new ArrayList<>(randomRecordsList);
+        expectedRecordData.sort(Comparator.comparing(Record::getId).reversed());
 
-        recordProcessingService.orderById(actualRecords, OrderEnum.DESC);
+        recordProcessingService.orderById(actualRecordData, OrderEnum.DESC);
 
-        assertEquals(expectedRecords, actualRecords);
-        logTestResult(actualRecords);
+        assertEquals(expectedRecordData, actualRecordData);
+        logTestResult(actualRecordData);
     }
 
     @Test
     public void test_orderByName_when_data_order_asc_should_sort_data_asc() {
-        List<Record> actualRecords = new ArrayList<>(randomRecordsList);
-        List<Record> expectedRecords = new ArrayList<>(randomRecordsList);
-        expectedRecords.sort(Comparator.comparing(Record::getName, String.CASE_INSENSITIVE_ORDER));
+        List<Record> actualRecordData = new ArrayList<>(randomRecordsList);
+        List<Record> expectedRecordData = new ArrayList<>(randomRecordsList);
+        expectedRecordData.sort(Comparator.comparing(Record::getName, String.CASE_INSENSITIVE_ORDER));
 
-        recordProcessingService.orderByName(actualRecords, OrderEnum.ASC);
+        recordProcessingService.orderByName(actualRecordData, OrderEnum.ASC);
 
-        assertEquals(expectedRecords, actualRecords);
-        logTestResult(actualRecords);
+        assertEquals(expectedRecordData, actualRecordData);
+        logTestResult(actualRecordData);
     }
 
     @Test
     public void test_orderByName_when_data_order_desc_should_sort_data_desc() {
-        List<Record> actualRecords = new ArrayList<>(randomRecordsList);
-        List<Record> expectedRecords = new ArrayList<>(randomRecordsList);
-        expectedRecords.sort(Comparator.comparing(Record::getName, String.CASE_INSENSITIVE_ORDER).reversed());
+        List<Record> actualRecordData = new ArrayList<>(randomRecordsList);
+        List<Record> expectedRecordData = new ArrayList<>(randomRecordsList);
+        expectedRecordData.sort(Comparator.comparing(Record::getName, String.CASE_INSENSITIVE_ORDER).reversed());
 
-        recordProcessingService.orderByName(actualRecords, OrderEnum.DESC);
+        recordProcessingService.orderByName(actualRecordData, OrderEnum.DESC);
 
-        assertEquals(expectedRecords, actualRecords);
-        logTestResult(actualRecords);
+        assertEquals(expectedRecordData, actualRecordData);
+        logTestResult(actualRecordData);
     }
 
     @Test
     public void test_orderByCreatedOn_when_data_order_asc_should_sort_data_asc() {
-        List<Record> actualRecords = new ArrayList<>(randomRecordsList);
-        List<Record> expectedRecords = new ArrayList<>(randomRecordsList);
-        expectedRecords.sort(Comparator.comparing(Record::getCreatedOn));
+        List<Record> actualRecordData = new ArrayList<>(randomRecordsList);
+        List<Record> expectedRecordData = new ArrayList<>(randomRecordsList);
+        expectedRecordData.sort(Comparator.comparing(Record::getCreatedOn));
 
-        recordProcessingService.orderByCreatedOn(actualRecords, OrderEnum.ASC);
+        recordProcessingService.orderByCreatedOn(actualRecordData, OrderEnum.ASC);
 
-        assertEquals(expectedRecords, actualRecords);
-        logTestResult(actualRecords);
+        assertEquals(expectedRecordData, actualRecordData);
+        logTestResult(actualRecordData);
     }
 
     @Test
     public void test_orderByCreatedOn_when_data_order_desc_should_sort_data_desc() {
-        List<Record> actualRecords = new ArrayList<>(randomRecordsList);
-        List<Record> expectedRecords = new ArrayList<>(randomRecordsList);
-        expectedRecords.sort(Comparator.comparing(Record::getCreatedOn).reversed());
+        List<Record> actualRecordData = new ArrayList<>(randomRecordsList);
+        List<Record> expectedRecordData = new ArrayList<>(randomRecordsList);
+        expectedRecordData.sort(Comparator.comparing(Record::getCreatedOn).reversed());
 
-        recordProcessingService.orderByCreatedOn(actualRecords, OrderEnum.DESC);
+        recordProcessingService.orderByCreatedOn(actualRecordData, OrderEnum.DESC);
 
-        assertEquals(expectedRecords, actualRecords);
-        logTestResult(actualRecords);
+        assertEquals(expectedRecordData, actualRecordData);
+        logTestResult(actualRecordData);
     }
 
     @Test
     public void test_getRecordsPage_when_input_zero_size_should_return_first_page_subset() {
         List<Record> recordsPage;
-        List<Record> actualRecords = new ArrayList<>();
+        List<Record> actualRecordData = new ArrayList<>();
 
-        recordsPage = recordProcessingService.getRecordsPage(actualRecords, PAGE_SIZE, 1);
+        recordsPage = recordProcessingService.getRecordsPage(actualRecordData, PAGE_SIZE, 1);
 
         assertEquals(0, recordsPage.size());
     }
@@ -214,17 +215,17 @@ public class RecordProcessingServiceTest {
     }
 
     private void testRecordsPagination(int actualRecordsSize, int page, int expectedRecordsSize, int expectedFirstRecordId, int expectedLastRecordId) {
-        List<Record> actualRecords = createRandomRecordList(actualRecordsSize);
-        actualRecords.sort(Comparator.comparing(Record::getId));
+        List<Record> actualRecordData = createRandomRecordList(actualRecordsSize);
+        actualRecordData.sort(Comparator.comparing(Record::getId));
         int expectedFirstInputRecordIndex =  Math.max(0, PAGE_SIZE * (page - 1));
-        int expectedLastInputRecordIndex =  Math.min(actualRecords.size() - 1, (PAGE_SIZE * page) - 1);
+        int expectedLastInputRecordIndex =  Math.min(actualRecordData.size() - 1, (PAGE_SIZE * page) - 1);
 
-        List<Record> actualRecordsPage = recordProcessingService.getRecordsPage(actualRecords, PAGE_SIZE, page);
+        List<Record> actualRecordsPage = recordProcessingService.getRecordsPage(actualRecordData, PAGE_SIZE, page);
 
         assertEquals(expectedRecordsSize, actualRecordsPage.size());
-        assertEquals(actualRecords.get(expectedFirstInputRecordIndex).getId(), actualRecordsPage.get(0).getId());
+        assertEquals(actualRecordData.get(expectedFirstInputRecordIndex).getId(), actualRecordsPage.get(0).getId());
         assertEquals(expectedFirstRecordId, actualRecordsPage.get(0).getId());
-        assertEquals(actualRecords.get(expectedLastInputRecordIndex).getId(), actualRecordsPage.get(expectedRecordsSize - 1).getId());
+        assertEquals(actualRecordData.get(expectedLastInputRecordIndex).getId(), actualRecordsPage.get(expectedRecordsSize - 1).getId());
         assertEquals(expectedLastRecordId, actualRecordsPage.get(expectedRecordsSize - 1).getId());
 
         logTestResult(actualRecordsPage);
@@ -256,8 +257,11 @@ public class RecordProcessingServiceTest {
         return StatusEnum.values()[randomStatusIndex];
     }
 
-    private static void logTestResult(List<Record> records) {
-        for (Record record : records) {
+    private static void logTestResult(List<Record> recordList) {
+        if (!IS_PRINT_TEST) {
+            return;
+        }
+        for (Record record : recordList) {
             logger.debug("Actual record, Id: {}, Name: {}, CreatedOn: {}", record.getId(), record.getName(), record.getCreatedOn());
         }
     }
