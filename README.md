@@ -35,7 +35,7 @@ Follow these steps to set up the project locally.
     * Alternatively, clone the repository from GitHub:
 
     ```sh
-    git clone [https://github.com/alejandroinigo/data-manager-micro.git](https://github.com/alejandroinigo/data-manager-micro.git)
+    git clone https://github.com/alejandroinigo/data-manager-micro.git
     ```
 
 2.  **Build the Project:**
